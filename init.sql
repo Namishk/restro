@@ -40,14 +40,43 @@ BEGIN
     -- Generate 20 Restaurants
     WHILE i < 20 DO
         INSERT INTO restros (name, city, address) 
-        VALUES (CONCAT('Restaurant ', i), 'Generated City', CONCAT('Address ', i));
+        VALUES (
+            CONCAT('Restaurant ', i), 
+            CASE (i % 10)
+                WHEN 0 THEN 'Mumbai'
+                WHEN 1 THEN 'Delhi'
+                WHEN 2 THEN 'Bangalore'
+                WHEN 3 THEN 'Hyderabad'
+                WHEN 4 THEN 'Chennai'
+                WHEN 5 THEN 'Kolkata'
+                WHEN 6 THEN 'Pune'
+                WHEN 7 THEN 'Jaipur'
+                WHEN 8 THEN 'Ahmedabad'
+                ELSE 'Lucknow'
+            END,
+            CONCAT('Address ', i)
+        );
         SET r_id = LAST_INSERT_ID();
         
         -- Generate 8 Dishes for this restaurant
         SET j = 0;
         WHILE j < 8 DO
+             -- Use modulo to cycle through a fixed list of realistic dish names
              INSERT INTO dishes (name, price, restro_id) 
-             VALUES (CONCAT('Dish ', i, '-', j), ROUND(10 + RAND() * 100, 2), r_id);
+             VALUES (
+                CASE (j % 8)
+                    WHEN 0 THEN 'Hyderabadi Biryani'
+                    WHEN 1 THEN 'Butter Chicken'
+                    WHEN 2 THEN 'Paneer Tikka Masala'
+                    WHEN 3 THEN 'Masala Dosa'
+                    WHEN 4 THEN 'Chole Bhature'
+                    WHEN 5 THEN 'Tandoori Chicken'
+                    WHEN 6 THEN 'Palak Paneer'
+                    ELSE 'Veg Thali'
+                END,
+                ROUND(100 + RAND() * 400, 2), -- Price between 100 and 500
+                r_id
+             );
              SET j = j + 1;
         END WHILE;
         
