@@ -5,7 +5,7 @@ const app = express();
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL || "postgresql://restro_user:password@localhost:5432/restro_db",
-    ssl: process.env.DB_SSL === 'false' ? false : (process.env.DATABASE_URL ? { rejectUnauthorized: false } : false)
+    ssl: { rejectUnauthorized: false }
 });
 
 // Test connection
