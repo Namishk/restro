@@ -1,0 +1,37 @@
+services:
+  # Web Service for the Express App
+  - type: web
+    name: restro-app
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DB_HOST
+        fromService:
+          type: pserv
+          name: restro-db
+          property: host
+      - key: DB_USER
+        value: root
+      - key: DB_PASSWORD
+        fromEnvVar: MYSQL_ROOT_PASSWORD
+      - key: DB_NAME
+        value: restro_db
+      - key: PORT
+        value: 3000
+
+  # Private Service for MySQL Database
+  - type: pserv
+    name: restro-db
+    env: docker
+    dockerfilePath: ./Dockerfile.mysql
+    plan: free
+    disk:
+      name: mysql-disk
+      mountPath: /var/lib/mysql
+      sizeGB: 1
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+      - key: MYSQL_DATABASE
+        value: restro_db
