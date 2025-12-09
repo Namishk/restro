@@ -85,6 +85,29 @@ The `init.sql` script includes a Stored Procedure `PopulateData` that automatica
 -   ~160 Dishes
 -   ~2000 Orders (randomized)
 
+## Deployment
+
+### Deploy to Render
+
+### Deploy to Render
+
+**Note:** Render's Free Tier does not support private MySQL services (`pserv`). You must provision a MySQL database externally (e.g., using [Aiven Free Tier](https://aiven.io/mysql) or a paid Render MySQL instance).
+
+1.  **Create your Database**:
+    -   Provision a MySQL database from a provider.
+    -   Run the contents of `init.sql` on your new database to set up the schema and data.
+2.  **Deploy App**:
+    -   Create a **New Blueprint Instance** on [Render dashboard](https://dashboard.render.com/).
+    -   Connect your GitHub repository.
+    -   Render will detect `render.yaml` and ask for the following environment variables:
+        -   `DB_HOST`: Hostname of your external database.
+        -   `DB_USER`: Your database username.
+        -   `DB_PASSWORD`: Your database password.
+    -   The `restro-app` service will be deployed.
+3.  Click **Apply**.
+
+Once deployed, your API will be accessible via the URL provided by Render.
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
