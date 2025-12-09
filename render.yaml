@@ -15,7 +15,5 @@ services:
 
 databases:
   - name: restro-db
-    databaseName: restro_db
-    user: restro_user
-    plan: free # Note: Render Free Tier Postgres expires after 30 days
+    plan: free
 
