@@ -12,12 +12,15 @@ services:
       - DB_SSL=false
 
   db:
-    image: postgres:15-alpine
+    image: postgres:15
     environment:
-      - POSTGRES_USER=restro_user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=restro_db
+      - DATABASE_URL=postgresql://restro_user:password@db:5432/restro_db
+      - DB_SSL=false
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:
