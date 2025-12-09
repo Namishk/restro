@@ -14,8 +14,9 @@ services:
   db:
     image: postgres:15
     environment:
-      - DATABASE_URL=postgresql://restro_user:password@db:5432/restro_db
-      - DB_SSL=false
+      - POSTGRES_USER=restro_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=restro_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
