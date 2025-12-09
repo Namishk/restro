@@ -8,17 +8,16 @@ services:
     depends_on:
       - db
     environment:
-      - DB_HOST=db
-      - DB_USER=root
-      - DB_PASSWORD=password
-      - DB_NAME=restro_db
+      - DATABASE_URL=postgresql://restro_user:password@db:5432/restro_db
+      - DB_SSL=false
 
   db:
-    image: mysql:8.0
+    image: postgres:15-alpine
     environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=restro_db
+      - POSTGRES_USER=restro_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=restro_db
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql

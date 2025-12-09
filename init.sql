@@ -3,42 +3,41 @@ DROP TABLE IF EXISTS dishes;
 DROP TABLE IF EXISTS restros;
 
 CREATE TABLE restros (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     city VARCHAR(255),
     address VARCHAR(255)
 );
 
 CREATE TABLE dishes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     restro_id INT,
     FOREIGN KEY (restro_id) REFERENCES restros(id),
-    INDEX idx_name_price (name, price)
+    CONSTRAINT restro_fk FOREIGN KEY (restro_id) REFERENCES restros(id)
 );
+CREATE INDEX idx_name_price ON dishes (name, price);
 
 CREATE TABLE orders (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     restro_id INT,
     dish_id INT,
     order_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (restro_id) REFERENCES restros(id),
-    FOREIGN KEY (dish_id) REFERENCES dishes(id),
-    INDEX idx_dish_id (dish_id)
+    FOREIGN KEY (dish_id) REFERENCES dishes(id)
 );
+CREATE INDEX idx_dish_id ON orders (dish_id);
 
-DELIMITER $$
-
-CREATE PROCEDURE PopulateData()
+DO $$
+DECLARE
+    i INT := 0;
+    j INT := 0;
+    r_id INT;
+    d_id INT;
 BEGIN
-    DECLARE i INT DEFAULT 0;
-    DECLARE j INT DEFAULT 0;
-    DECLARE r_id INT;
-    DECLARE d_id INT;
-    
     -- Generate 20 Restaurants
-    WHILE i < 20 DO
+    WHILE i < 20 LOOP
         INSERT INTO restros (name, city, address) 
         VALUES (
             CONCAT('Restaurant ', i), 
@@ -55,13 +54,12 @@ BEGIN
                 ELSE 'Lucknow'
             END,
             CONCAT('Address ', i)
-        );
-        SET r_id = LAST_INSERT_ID();
+        )
+        RETURNING id INTO r_id;
         
         -- Generate 8 Dishes for this restaurant
-        SET j = 0;
-        WHILE j < 8 DO
-             -- Use modulo to cycle through a fixed list of realistic dish names
+        j := 0;
+        WHILE j < 8 LOOP
              INSERT INTO dishes (name, price, restro_id) 
              VALUES (
                 CASE (j % 8)
@@ -74,28 +72,22 @@ BEGIN
                     WHEN 6 THEN 'Palak Paneer'
                     ELSE 'Veg Thali'
                 END,
-                ROUND(100 + RAND() * 400, 2), -- Price between 100 and 500
+                ROUND((100 + random() * 400)::numeric, 2), 
                 r_id
              );
-             SET j = j + 1;
-        END WHILE;
+             j := j + 1;
+        END LOOP;
         
-        SET i = i + 1;
-    END WHILE;
+        i := i + 1;
+    END LOOP;
     
     -- Generate 2000 Orders
-    SET i = 0;
-    WHILE i < 2000 DO
-        -- Pick random existing restro and dish (simplistic approach, might pick dish not belonging to restro, but sticking to "valid ID" constraint)
-        -- To be strictly correct: Pick a random dish, then get its restro_id.
-        SELECT id, restro_id INTO d_id, r_id FROM dishes ORDER BY RAND() LIMIT 1;
+    i := 0;
+    WHILE i < 2000 LOOP
+        -- Select a random dish and its restro_id
+        SELECT id, restro_id INTO d_id, r_id FROM dishes ORDER BY random() LIMIT 1;
         
         INSERT INTO orders (restro_id, dish_id) VALUES (r_id, d_id);
-        SET i = i + 1;
-    END WHILE;
-    
-END$$
-
-DELIMITER ;
-
-CALL PopulateData();
+        i := i + 1;
+    END LOOP;
+END $$;
