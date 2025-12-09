@@ -14,7 +14,7 @@ services:
       - key: DB_USER
         value: root
       - key: DB_PASSWORD
-        fromEnvVar: MYSQL_ROOT_PASSWORD
+        value: password
       - key: DB_NAME
         value: restro_db
       - key: PORT
@@ -26,12 +26,8 @@ services:
     env: docker
     dockerfilePath: ./Dockerfile.mysql
     plan: free
-    disk:
-      name: mysql-disk
-      mountPath: /var/lib/mysql
-      sizeGB: 1
     envVars:
       - key: MYSQL_ROOT_PASSWORD
-        generateValue: true
+        value: password
       - key: MYSQL_DATABASE
         value: restro_db
