@@ -85,4 +85,6 @@ The `init.sql` script includes a Stored Procedure `PopulateData` that automatica
 -   ~160 Dishes
 -   ~2000 Orders (randomized)
 
-This ensures the database is populated with sufficient data for testing search and performance.
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
